@@ -18,7 +18,7 @@ npm run build
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-##数据库进初始化
+## 数据库初始化
 
 ### 创建名为student_management_system的数据库
 #### 1. 学生表（student）
