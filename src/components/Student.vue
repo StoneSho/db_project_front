@@ -33,7 +33,6 @@
             <el-table-column prop="phone" label="电话" width="140" />
             <el-table-column prop="email" label="邮箱" width="180" />
         </el-table>
-        <div v-else-if="result" style="margin-top: 20px; color: #409EFF;">{{ result }}</div>
     </div>
 </template>
 

@@ -1,7 +1,9 @@
 <template>
     <div style="padding: 20px;">
         <el-form label-width="100px">
+            <!--查询模块-->>
             <el-form-item label="查询方式">
+                <!--双向绑定action及其内部值，触发-->
                 <el-select v-model="action" placeholder="请选择查询方式">
                     <el-option label="查询全部课程" value="selectAll"></el-option>
                     <el-option label="按课程ID查询" value="selectById"></el-option>
@@ -12,25 +14,22 @@
             </el-form-item>
             <el-form-item label="输入JSON">
                 <el-input type="textarea" v-model="jsonInput" :rows="4"
-                    placeholder='如 {"course_id":1} 或 {"course_code":"JS101"}    或 {"course_name":"高等数学"}' />
+                    placeholder='如 {"course_id":1} 或 {"course_code":"JS101"} 或 {"course_name":"高等数学"}' />
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="handleAction">查询</el-button>
             </el-form-item>
         </el-form>
 
+        <!--结果显示模块-->>
         <el-table v-if="Array.isArray(result)" :data="result" style="width: 100%; margin-top: 20px;">
             <el-table-column prop="course_id" label="课程ID" width="100" />
             <el-table-column prop="course_code" label="课程代码" width="120" />
             <el-table-column prop="course_name" label="课程名称" width="180" />
         </el-table>
-        <div v-else-if="result" style="margin-top: 20px; color: #409EFF;">{{ result }}</div>
 
-        <el-form-item label="查询选课学生">
-            <el-input v-model="selectedCourseId" placeholder="请输入课程ID" style="width: 200px; display: inline-block; margin-right: 10px;" />
-            <el-button type="primary" @click="getStudentsByCourse">查询</el-button>
-        </el-form-item>
-
+        <!--查询选课学生模块-->
+        <!--当studentOfCourse表不为空时，且data时通过该方法获取时显示-->>
         <el-table v-if="studentsOfCourse.length" :data="studentsOfCourse" style="width: 100%; margin-top: 20px;">
             <el-table-column prop="studentId" label="ID" width="100" />
             <el-table-column prop="studentNumber" label="学号" width="120" />
@@ -54,22 +53,24 @@ export default {
             action: '',
             jsonInput: '',
             result: null,
-            selectedCourseId: '',
             studentsOfCourse: []
         }
     },
     methods: {
         handleAction() {
             var data = {};
+            //判断是否为正确的json格式
             if (this.jsonInput) {
                 try {
                     data = JSON.parse(this.jsonInput);
                 } catch (e) {
-                    this.$message.error('JSON格式错误！');
+                    this.$message.error('JSON格式错误！');  //$message为element-ui的提示，三秒自动消失，success，warning，info，error
                     return;
                 }
             }
+
             this.result = null;
+            //将result和返回的data进行绑定
             if (this.action === 'selectAll') {
                 axios.get('/course/selectAll').then(res => {
                     this.result = res.data;
@@ -95,16 +96,6 @@ export default {
                     this.studentsOfCourse = res.data;
                 });
             }
-        },
-        getStudentsByCourse() {
-            if (!this.selectedCourseId) {
-                this.$message.error('请输入课程ID');
-                return;
-            }
-            this.$http.get('/course/students/' + this.selectedCourseId)
-                .then(res => {
-                    this.studentsOfCourse = res.data;
-                });
         }
     }
 }
